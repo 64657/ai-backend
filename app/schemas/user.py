@@ -7,4 +7,7 @@ class UserCreate(BaseModel):
 class UserResponse(BaseModel):
     id: int
     name: str
-    age: int
+    email: str
+
+    class Config:
+        from_attributes = True

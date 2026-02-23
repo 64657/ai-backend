@@ -4,6 +4,8 @@ from app.schemas.user import UserCreate
 from app.services.user_service import UserService
 from app.repositories.user_repository import UserRepository
 from app.db.session import get_db
+from app.core.dependencies import get_current_user
+from app.schemas.user import UserResponse
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -24,6 +26,10 @@ async def get_users(
 ):
     return await user_service.get_users()
 
+@router.get("/me", response_model=UserResponse)
+async def get_me(current_user = Depends(get_current_user)):
+    return current_user
+    
 @router.get("/{user_id}")
 async def get_user(
     user_id: int,
