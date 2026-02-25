@@ -1,4 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 from app.models.document import Document
 
 class DocumentRepository:
@@ -15,3 +16,9 @@ class DocumentRepository:
         await self.db.commit()
         await self.db.refresh(doc)
         return doc
+
+    async def get_by_id(self, doc_id: int):
+        result = await self.db.execute(
+            select(Document).where(Document.id == doc_id)
+        )
+        return result.scalar_one_or_none()
