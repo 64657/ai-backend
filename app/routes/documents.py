@@ -68,3 +68,20 @@ async def process_document(
     result = await service.process_document(doc_id)
 
     return result
+
+@router.post("/{doc_id}/ask")
+async def ask_document(
+    doc_id: int,
+    question: str,
+    current_user = Depends(get_current_user),
+    service: DocumentService = Depends(get_document_service)
+):
+    document = await service.repo.get_by_id(doc_id)
+
+    if not document:
+        raise HTTPException(status_code=404, detail="Document not found")
+
+    if document.user_id != current_user.id:
+        raise HTTPException(status_code = 403, detail="Not allowed")
+
+    return await service.ask(doc_id, question)
